@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +22,9 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -64,14 +67,14 @@ class ListObject(val id: Int, var task: String, var status: Boolean = false){
 @Composable
 fun AppMainframe(modifier: Modifier = Modifier) {
     var todoItems by remember { mutableStateOf(listOf<ListObject>()) }
-//    var text by remember { mutableStateOf("") }
 
-    Column(modifier.background(colorResource(R.color.orange))){
+
+    Column(modifier.background(colorResource(R.color.dark_yellow)).padding(top = 16.dp)){
         Row (verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
             Text(
                 text = "To-Do",
-                color = Color.White,
+                color = Color.DarkGray,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
                 fontFamily = FontFamily.Serif,
@@ -85,17 +88,22 @@ fun AppMainframe(modifier: Modifier = Modifier) {
                 todoItems = todoItems + newTask
             },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)) {
-                Icon(imageVector = Icons.Outlined.Add , contentDescription = "Delete Task", modifier = Modifier.size(44.dp))
+                Icon(imageVector = Icons.Outlined.Add ,
+                    contentDescription = "Delete Task",
+                    tint = Color.DarkGray,
+                    modifier = Modifier.size(44.dp))
             }
         }
-        LazyColumn (modifier.background(Color.White)){
+        LazyColumn (modifier.background(Color.DarkGray)){
             items(todoItems){item->
                 var text by remember { mutableStateOf("") }
                 var status by remember { mutableStateOf(item.status) }
+            Column(modifier = Modifier.fillMaxWidth()){
                 Row (horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
-                        .background(colorResource(R.color.light_pink_skin))
-                        ){
+                        .background(colorResource(R.color.black))
+                ){
                     Checkbox(checked = status, enabled = true, onCheckedChange = {
                         if(!status){
                             status = true
@@ -108,25 +116,31 @@ fun AppMainframe(modifier: Modifier = Modifier) {
                     })
                     TextField(value = text,
                         onValueChange = {
-                            newText:String -> text = newText
+                                newText:String -> text = newText
                             item.task = text
-                                        },
+                        },
                         enabled = !item.status,
                         singleLine = true,
                     )
-                    Button(onClick = {
+                    IconButton(
+                        onClick = {
                             val index = todoItems.indexOf(item)
                             todoItems = todoItems.toMutableList().also {
                                 it.removeAt(index)
                             }
                         }
-                        ,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                    ) {
-                        Icon(imageVector = Icons.Outlined.Delete , contentDescription = "Delete Task")
-                    }
+                        , content = {
+                            Icon(imageVector = Icons.Outlined.Delete , contentDescription = "Delete Task",
+                                tint = Color.White,
+                            )
+                        }
+
+                    )
                 }
+                HorizontalDivider(thickness = 1.dp, color = Color.White)
             }
+            }
+
         }
     }
 
